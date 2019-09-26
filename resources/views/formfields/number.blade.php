@@ -3,6 +3,7 @@
        name="{{ $row->field }}"
        type="number"
        @if($row->required == 1) required @endif
+       @if(!empty($options->readonly)) readonly @endif
        @if(isset($options->min)) min="{{ $options->min }}" @endif
        @if(isset($options->max)) max="{{ $options->max }}" @endif
        step="{{ $options->step ?? 'any' }}"
