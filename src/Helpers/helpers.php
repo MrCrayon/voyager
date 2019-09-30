@@ -32,3 +32,16 @@ if (!function_exists('get_file_name')) {
         }
     }
 }
+
+if (! function_exists('getIncludeContent')) {
+    function getIncludeContent($vars, $expression, $params = [])
+    {
+        $expression = Illuminate\Support\Facades\Blade::stripParentheses($expression);
+        $__env = $vars['__env'];
+
+        $vars = array_merge($vars, $params);
+        $content = $__env->make($expression, Illuminate\Support\Arr::except($vars, ['__data', '__path']))->render();
+
+        return trim($content);
+    }
+}
