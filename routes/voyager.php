@@ -61,8 +61,8 @@ $router->group(['as' => 'voyager.'], function () use ($router) {
     $router->post('settings', ['uses' => $namespace.'SettingsController@store', 'as' => 'settings.store']);
 
     // Login/Logout
-    $router->get('login', ['uses' => $namespace.'AuthController@login', 'as' => 'login']);
-    $router->post('login', ['uses' => $namespace.'AuthController@processLogin', 'as' => 'login']);
+    $router->get('login', ['uses' => $namespace.'AuthController@showLoginForm', 'as' => 'login']);
+    $router->post('login', ['uses' => $namespace.'AuthController@login', 'as' => 'login']);
     $router->get('logout', ['uses' => $namespace.'AuthController@logout', 'as' => 'logout']);
 
     // Asset routes

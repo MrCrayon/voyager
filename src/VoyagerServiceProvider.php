@@ -89,6 +89,12 @@ class VoyagerServiceProvider extends ServiceProvider
         $this->loadSettingsFrom(Str::finish(storage_path('voyager'), '/').'settings.json');
 
         $this->commands(InstallCommand::class);
+
+        // Check enabled plugins and bind the correct implementation
+        $this->app->bind(
+            \TCG\Voyager\Contracts\VoyagerAuthContract::class,
+            \TCG\Voyager\Classes\VoyagerAuth::class
+        );
     }
 
     public function loadBreadsFrom($path)
