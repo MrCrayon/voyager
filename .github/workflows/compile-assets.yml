@@ -16,7 +16,7 @@ jobs:
     - name: Install Dependencies
       run: npm install
     - name: Compile Assets
-      run: npm run dev
+      run: npm run prod
     - name: Commit files
       run: |
         git config --local user.email "action@github.com"
