@@ -9,7 +9,7 @@ jobs:
   compile-assets:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@test-github-actions
+    - uses: actions/checkout@v1
     - name: Install Dependencies
       run: npm install
     - name: Compile Assets
