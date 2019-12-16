@@ -10,7 +10,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Check Assets status
+      run: git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -c "resources/assets"
     - name: Install Dependencies
       run: npm install
     - name: Compile Assets
       run: npm run dev
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git commit -m "Compile Assets (automatic commit)" -a
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: test-github-actions
