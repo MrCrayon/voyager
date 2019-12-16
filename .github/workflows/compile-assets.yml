@@ -11,7 +11,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Check Assets status
-      run: ASSETS_CHANGED=`git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -c 'resources/assets'`
+      # If nothing was changed in resources/assets blocks job (need to find a better way)
+      run: git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -c 'resources/assets'
     - name: Install Dependencies
       run: npm install
     - name: Compile Assets
