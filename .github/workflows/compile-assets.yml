@@ -1,0 +1,16 @@
+name: Compile Assets
+
+on:
+  push:
+    branches:
+      - test-github-actions
+
+jobs:
+  compile-assets:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@test-github-actions
+    - name: Install Dependencies
+      run: npm install
+    - name: Compile Assets
+      run: npm run dev
