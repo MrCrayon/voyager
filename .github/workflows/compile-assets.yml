@@ -26,9 +26,8 @@ jobs:
       run: |
         if [[$ASSETS_CHANGED -gt 0 ]]; then exit 0; fi
     - name: Create Pull Request
-      id: cpr
-      run: if [[$ASSETS_CHANGED -gt 0 ]]; then exit 0; fi
       uses: peter-evans/create-pull-request@v1
+      id: cpr
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         title: Compile Assets
