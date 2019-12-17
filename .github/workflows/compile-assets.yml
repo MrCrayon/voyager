@@ -23,7 +23,7 @@ jobs:
     - name: Compile Assets
       run: |
         if [[ -z "$ASSETS_CHANGED" ]]; then exit 0; fi
-        npm run prod
+        npm run production
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v1
       id: cpr
