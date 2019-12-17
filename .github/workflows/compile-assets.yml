@@ -12,8 +12,9 @@ jobs:
     - uses: actions/checkout@v1
     - name: Check Assets status
       # If nothing was changed in resources/assets blocks job (need to find a better way)
-      run: ASSETS_CHANGED=`git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -c 'resources/assets'` ; trap EXIT
-      run: echo "::set-env name=ASSETS_CHANGED::$ASSETS_CHANGED"
+      run: |
+        ASSETS_CHANGED=`git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -c 'resources/assets'` ; trap EXIT
+        echo "::set-env name=ASSETS_CHANGED::$ASSETS_CHANGED"
     - name: Install Dependencies
       run: |
         if [[$ASSETS_CHANGED -gt 0 ]]; then exit 0; fi
