@@ -13,11 +13,11 @@ jobs:
     - name: Install Dependencies
       run: |
         npm install
-        publishable/assets/js -l
+        ls -l publishable/assets/js -l
     - name: Compile Assets
       run: |
         npm run prod
-        publishable/assets/js -l
+        ls -l publishable/assets/js -l
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v1
       id: cpr
