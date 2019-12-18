@@ -11,13 +11,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install Dependencies
-      run: |
-        npm install
-        ls -l publishable/assets/js -l
+      run: npm install
     - name: Compile Assets
-      run: |
-        npm run prod
-        ls -l publishable/assets/js -l
+      run: npm run prod
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v1
       id: cpr
