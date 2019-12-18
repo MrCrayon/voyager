@@ -16,7 +16,7 @@ jobs:
     - name: Install Dependencies
       run: npm install
     - name: Compile Assets
-      run: npm run production
+      run: npm run dev
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v1
       id: cpr
