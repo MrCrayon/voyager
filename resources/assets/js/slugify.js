@@ -15,7 +15,6 @@
  * Char map from: https://github.com/diegok/slugit-jquery
  */
 
-//test
 ;( function( $, window, document, undefined ) {
 
     "use strict";
