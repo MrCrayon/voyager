@@ -2,27 +2,28 @@ name: Compile Assets
 
 on:
   push:
+    branches:
+      - test-github-actions
     paths:
-    - 'resources/assets/**'
+      - 'resources/assets/**'
 
 jobs:
   compile-assets:
-    if: github.ref == 'refs/heads/test-github-actions'
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Install Dependencies
-      run: npm install
-    - name: Compile Assets
-      run: npm run prod
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v1
-      id: cpr
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        title: Compile Assets
-        commit-message: Automatic assets compilation
-        author-name: github-actions[bot]
-        author-email: 41898282+github-actions[bot]@users.noreply.github.com
-        committer-name: GitHub
-        committer-email: noreply@github.com
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: npm install
+      - name: Compile Assets
+        run: npm run prod
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v1
+        id: cpr
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Compile Assets
+          commit-message: Automatic assets compilation
+          author-name: github-actions[bot]
+          author-email: 41898282+github-actions[bot]@users.noreply.github.com
+          committer-name: GitHub
+          committer-email: noreply@github.com
