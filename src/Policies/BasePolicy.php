@@ -77,7 +77,7 @@ class BasePolicy
     {
         if (!isset(self::$datatypes[get_class($model)])) {
             $dataType = Voyager::model('DataType');
-            self::$datatypes[get_class($model)] = $dataType->where('model_name', get_class($model))->first();
+            self::$datatypes[get_class($model)] = $dataType->getCached()->where('model_name', get_class($model))->first();
         }
 
         $dataType = self::$datatypes[get_class($model)];

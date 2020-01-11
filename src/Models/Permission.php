@@ -3,10 +3,13 @@
 namespace TCG\Voyager\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use TCG\Voyager\Traits\HasCache;
 use TCG\Voyager\Facades\Voyager;
 
 class Permission extends Model
 {
+    use HasCache;
+
     protected $guarded = [];
 
     public function roles()

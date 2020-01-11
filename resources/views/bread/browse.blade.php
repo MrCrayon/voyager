@@ -86,7 +86,7 @@
                                     'name' => 'bulkdelete',
                                 ];
                             }
-                            foreach ($dataType->browseRows as $row) {
+                            foreach ($dataTypeRows as $row) {
                                 $columns[] = [
                                     'className' => $row->details->display->class->browse ?? null,
                                     'name' => $row->field,
@@ -101,7 +101,7 @@
                                 if ($showCheckboxColumn) {
                                     $item[] = '<input type="checkbox" name="row_id" id="checkbox_' . $data->getKey() . '" value="' . $data->getKey() . '">';
                                 }
-                                foreach ($dataType->browseRows as $row) {
+                                foreach ($dataTypeRows as $row) {
                                     $field = '';
                                     $filter = false;
 
@@ -267,7 +267,8 @@
                                                 <input type="checkbox" class="select_all">
                                             </th>
                                         @endif
-                                        @foreach($dataType->browseRows as $row)
+
+                                        @foreach($dataTypeRows as $row)
                                         <th class="{{ $row->details->browse->thead->class ?? '' }}">
                                             @if ($isServerSide && $row->type !== 'relationship')
                                                 <a href="{{ $row->sortByUrl($orderBy, $sortOrder) }}">

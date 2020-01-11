@@ -212,12 +212,6 @@ return [
     |
     */
 
-    'settings' => [
-        // Enables Laravel cache method for
-        // storing cache values between requests
-        'cache' => false,
-    ],
-
     // Activate compass when environment is NOT local
     'compass_in_production' => false,
 

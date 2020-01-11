@@ -40,7 +40,7 @@
 
                 <div class="panel panel-bordered" style="padding-bottom:5px;">
                     <!-- form start -->
-                    @foreach($dataType->readRows as $row)
+                    @foreach($dataTypeRows as $row)
                         @php
                         if ($dataTypeContent->{$row->field.'_read'}) {
                             $dataTypeContent->{$row->field} = $dataTypeContent->{$row->field.'_read'};
