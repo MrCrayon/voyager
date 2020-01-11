@@ -7,38 +7,22 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use TCG\Voyager\Events\MenuDisplay;
 use TCG\Voyager\Facades\Voyager;
+use TCG\Voyager\Traits\HasCache;
 
 /**
  * @todo: Refactor this class by using something like MenuBuilder Helper.
  */
 class Menu extends Model
 {
+    use HasCache;
+
     protected $table = 'menus';
 
     protected $guarded = [];
 
-    public static function boot()
-    {
-        parent::boot();
-
-        static::saved(function ($model) {
-            $model->removeMenuFromCache();
-        });
-
-        static::deleted(function ($model) {
-            $model->removeMenuFromCache();
-        });
-    }
-
     public function items()
     {
         return $this->hasMany(Voyager::modelClass('MenuItem'));
-    }
-
-    public function parent_items()
-    {
-        return $this->hasMany(Voyager::modelClass('MenuItem'))
-            ->whereNull('parent_id');
     }
 
     /**
@@ -53,13 +37,7 @@ class Menu extends Model
     public static function display($menuName, $type = null, array $options = [])
     {
         // GET THE MENU - sort collection in blade
-        $menu = \Cache::remember('voyager_menu_'.$menuName, \Carbon\Carbon::now()->addDays(30), function () use ($menuName) {
-            return static::where('name', '=', $menuName)
-            ->with(['parent_items.children' => function ($q) {
-                $q->orderBy('order');
-            }])
-            ->first();
-        });
+        $menu = self::getCachedWith(['items' => Voyager::modelClass('MenuItem')])->where('name', $menuName)->first();
 
         // Check for Menu Existence
         if (!isset($menu)) {
@@ -71,7 +49,12 @@ class Menu extends Model
         // Convert options array into object
         $options = (object) $options;
 
-        $items = $menu->parent_items->sortBy('order');
+        // Eagerload Translations
+        if (config('voyager.multilingual.enabled')) {
+            $menu->items->load('translations');
+        }
+
+        $items = $menu->items->where('parent_id', null)->sortBy('order');
 
         if ($menuName == 'admin' && $type == '_json') {
             $items = static::processItems($items);
@@ -100,11 +83,6 @@ class Menu extends Model
         );
     }
 
-    public function removeMenuFromCache()
-    {
-        \Cache::forget('voyager_menu_'.$this->name);
-    }
-
     protected static function processItems($items)
     {
         // Eagerload Translations
@@ -113,6 +91,8 @@ class Menu extends Model
         }
 
         $items = $items->transform(function ($item) {
+            $item->children = $item->children;
+
             // Translate title
             $item->title = $item->getTranslatedAttribute('title');
             // Resolve URL/Route

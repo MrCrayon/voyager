@@ -12,16 +12,18 @@ class VoyagerRoleController extends VoyagerBaseController
     {
         $slug = $this->getSlug($request);
 
-        $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+        $dataType = Voyager::model('DataType')->getCached()->where('slug', $slug)->first();
 
         // Check permission
         $this->authorize('edit', app($dataType->model_name));
 
+        $dataTypeRows = $dataType->editRows;
+
         //Validate fields
-        $val = $this->validateBread($request->all(), $dataType->editRows, $dataType->name, $id)->validate();
+        $val = $this->validateBread($request->all(), $dataTypeRows, $dataType->name, $id)->validate();
 
         $data = call_user_func([$dataType->model_name, 'findOrFail'], $id);
-        $this->insertUpdateData($request, $slug, $dataType->editRows, $data);
+        $this->insertUpdateData($request, $slug, $dataTypeRows, $data);
 
         $data->permissions()->sync($request->input('permissions', []));
 
@@ -38,16 +40,18 @@ class VoyagerRoleController extends VoyagerBaseController
     {
         $slug = $this->getSlug($request);
 
-        $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
+        $dataType = Voyager::model('DataType')->getCached()->where('slug', $slug)->first();
 
         // Check permission
         $this->authorize('add', app($dataType->model_name));
 
+        $dataTypeRows = $dataType->addRows;
+
         //Validate fields
-        $val = $this->validateBread($request->all(), $dataType->addRows)->validate();
+        $val = $this->validateBread($request->all(), $dataTypeRows)->validate();
 
         $data = new $dataType->model_name();
-        $this->insertUpdateData($request, $slug, $dataType->addRows, $data);
+        $this->insertUpdateData($request, $slug, $dataTypeRows, $data);
 
         $data->permissions()->sync($request->input('permissions', []));
 

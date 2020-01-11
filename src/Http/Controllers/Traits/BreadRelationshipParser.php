@@ -8,25 +8,27 @@ use TCG\Voyager\Models\DataType;
 
 trait BreadRelationshipParser
 {
-    protected function removeRelationshipField(DataType $dataType, $bread_type = 'browse')
+    protected function removeRelationshipField($dataTypeRows)
     {
         $forget_keys = [];
-        foreach ($dataType->{$bread_type.'Rows'} as $key => $row) {
+        foreach ($dataTypeRows as $key => $row) {
             if ($row->type == 'relationship') {
                 if ($row->details->type == 'belongsTo') {
                     $relationshipField = @$row->details->column;
-                    $keyInCollection = key($dataType->{$bread_type.'Rows'}->where('field', '=', $relationshipField)->toArray());
+                    $keyInCollection = key($dataTypeRows->where('field', '=', $relationshipField)->toArray());
                     array_push($forget_keys, $keyInCollection);
                 }
             }
         }
 
         foreach ($forget_keys as $forget_key) {
-            $dataType->{$bread_type.'Rows'}->forget($forget_key);
+            $dataTypeRows->forget($forget_key);
         }
 
         // Reindex collection
-        $dataType->{$bread_type.'Rows'} = $dataType->{$bread_type.'Rows'}->values();
+        $dataTypeRows = $dataTypeRows->values();
+
+        return $dataTypeRows;
     }
 
     /**
@@ -59,13 +61,12 @@ trait BreadRelationshipParser
      * Eagerload relationships.
      *
      * @param mixed    $dataTypeContent     Can be either an eloquent Model or Collection.
-     * @param DataType $dataType
      * @param string   $action
      * @param bool     $isModelTranslatable
      *
      * @return void
      */
-    protected function eagerLoadRelations($dataTypeContent, DataType $dataType, string $action, bool $isModelTranslatable)
+    protected function eagerLoadRelations($dataTypeContent, $dataTypeRows, string $action, bool $isModelTranslatable)
     {
         // Eagerload Translations
         if (config('voyager.multilingual.enabled')) {
@@ -76,7 +77,7 @@ trait BreadRelationshipParser
 
             // DataRow is translatable so it will always try to load translations
             // even if current Model is not translatable
-            $dataType->{$action.'Rows'}->load('translations');
+            $dataTypeRows->load('translations');
         }
     }
 }

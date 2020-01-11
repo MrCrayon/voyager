@@ -11,7 +11,7 @@ class VoyagerUserController extends VoyagerBaseController
     public function profile(Request $request)
     {
         $route = '';
-        $dataType = Voyager::model('DataType')->where('model_name', Auth::guard(app('VoyagerGuard'))->getProvider()->getModel())->first();
+        $dataType = Voyager::model('DataType')->getCached(['model_name' => Auth::guard(app('VoyagerGuard'))->getProvider()->getModel()])->first();
         if (!$dataType && app('VoyagerGuard') == 'web') {
             $route = route('voyager.users.edit', Auth::user()->getKey());
         } elseif ($dataType) {

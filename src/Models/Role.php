@@ -4,9 +4,12 @@ namespace TCG\Voyager\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use TCG\Voyager\Facades\Voyager;
+use TCG\Voyager\Traits\HasCache;
 
 class Role extends Model
 {
+    use HasCache;
+
     protected $guarded = [];
 
     public function users()

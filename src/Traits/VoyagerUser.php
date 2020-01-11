@@ -4,6 +4,7 @@ namespace TCG\Voyager\Traits;
 
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use TCG\Voyager\Facades\Voyager;
+use TCG\Voyager\Traits\HasCache;
 
 /**
  * @property  \Illuminate\Database\Eloquent\Collection  roles
@@ -75,8 +76,6 @@ trait VoyagerUser
 
     public function hasPermission($name)
     {
-        $this->loadPermissionsRelations();
-
         $_permissions = $this->roles_all()
                               ->pluck('permissions')->flatten()
                               ->pluck('key')->unique()->toArray();
@@ -104,22 +103,26 @@ trait VoyagerUser
 
     private function loadRolesRelations()
     {
+        if (!$this->relationLoaded('role') || !$this->relationLoaded('roles')) {
+            $rolesAll = Voyager::model('Role')->getCachedWith(['permissions' => Voyager::modelClass('Permission')]);
+        }
+
         if (!$this->relationLoaded('role')) {
-            $this->load('role');
+            $role = $rolesAll->where('id', $this->role_id)->first();
+
+            $this->setRelation('role', $role);
         }
 
         if (!$this->relationLoaded('roles')) {
-            $this->load('roles');
-        }
-    }
+            if (in_array(HasCache::class, class_uses_recursive($this))) {
+                $user = static::getCachedWith(['roles' => Voyager::modelClass('Role')])->where($this->getKeyName(), $this->getKey())->first();
 
-    private function loadPermissionsRelations()
-    {
-        $this->loadRolesRelations();
+                $roles = $user->roles;
+            } else {
+                $roles = $rolesAll->whereIn('id', $this->roles()->get()->pluck('id')->toArray());
+            }
 
-        if ($this->role && !$this->role->relationLoaded('permissions')) {
-            $this->role->load('permissions');
-            $this->load('roles.permissions');
+            $this->setRelation('roles', $roles);
         }
     }
 }
