@@ -45,7 +45,7 @@
                                 </div>
                             @endif
 
-                            @foreach($dataType->addRows as $row)
+                            @foreach($dataTypeRows as $row)
                                 <div class="form-group">
                                     <label for="name">{{ $row->getTranslatedAttribute('display_name') }}</label>
 

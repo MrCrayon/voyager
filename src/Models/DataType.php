@@ -7,10 +7,12 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use TCG\Voyager\Database\Schema\SchemaManager;
 use TCG\Voyager\Facades\Voyager;
+use TCG\Voyager\Traits\HasCache;
 use TCG\Voyager\Traits\Translatable;
 
 class DataType extends Model
 {
+    use HasCache;
     use Translatable;
 
     protected $translatable = ['display_name_singular', 'display_name_plural'];
@@ -40,31 +42,6 @@ class DataType extends Model
     public function rows()
     {
         return $this->hasMany(Voyager::modelClass('DataRow'))->orderBy('order');
-    }
-
-    public function browseRows()
-    {
-        return $this->rows()->where('browse', 1);
-    }
-
-    public function readRows()
-    {
-        return $this->rows()->where('read', 1);
-    }
-
-    public function editRows()
-    {
-        return $this->rows()->where('edit', 1);
-    }
-
-    public function addRows()
-    {
-        return $this->rows()->where('add', 1);
-    }
-
-    public function deleteRows()
-    {
-        return $this->rows()->where('delete', 1);
     }
 
     public function lastRow()
@@ -304,5 +281,21 @@ class DataType extends Model
     public function setScopeAttribute($value)
     {
         $this->attributes['details'] = collect($this->details)->merge(['scope' => $value]);
+    }
+
+    protected function getRows($type)
+    {
+        return Voyager::model('DataRow')->getCached()->where('data_type_id', $this->id)->where($type, 1)->sortBy('order');
+    }
+
+    public function __get($name)
+    {
+        if (in_array($name, ['addRows', 'browseRows', 'deleteRows', 'editRows', 'readRows'])) {
+            $name = str_replace('Rows', '', $name);
+
+            return $this->getRows($name);
+        }
+
+        return parent::__get($name);
     }
 }

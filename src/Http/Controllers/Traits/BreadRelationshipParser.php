@@ -8,22 +8,24 @@ use TCG\Voyager\Models\DataType;
 
 trait BreadRelationshipParser
 {
-    protected function removeRelationshipField(DataType $dataType, $bread_type = 'browse')
+    protected function removeRelationshipField($dataTypeRows)
     {
         $forget_keys = [];
-        foreach ($dataType->{$bread_type.'Rows'} as $key => $row) {
+        foreach ($dataTypeRows as $key => $row) {
             if ($row->type == 'relationship') {
                 if ($row->details->type == 'belongsTo') {
                     $relationshipField = @$row->details->column;
-                    $keyInCollection = key($dataType->{$bread_type.'Rows'}->where('field', '=', $relationshipField)->toArray());
+                    $keyInCollection = key($dataTypeRows->where('field', '=', $relationshipField)->toArray());
                     array_push($forget_keys, $keyInCollection);
                 }
             }
         }
 
         foreach ($forget_keys as $forget_key) {
-            $dataType->{$bread_type.'Rows'}->forget($forget_key);
+            $dataTypeRows->forget($forget_key);
         }
+
+        return $dataTypeRows;
     }
 
     /**

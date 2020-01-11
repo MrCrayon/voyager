@@ -22,11 +22,11 @@ class MenuItemPolicy extends BasePolicy
     protected function checkPermission(User $user, $model, $action)
     {
         if (self::$permissions == null) {
-            self::$permissions = Voyager::model('Permission')->all();
+            self::$permissions = Voyager::model('Permission')->getCached();
         }
 
         if (self::$datatypes == null) {
-            self::$datatypes = Voyager::model('DataType')::all()->keyBy('slug');
+            self::$datatypes = Voyager::model('DataType')->getCached()->keyBy('slug');
         }
 
         $regex = str_replace('/', '\/', preg_quote(route('voyager.dashboard')));

@@ -5,10 +5,12 @@ namespace TCG\Voyager\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 use TCG\Voyager\Facades\Voyager;
+use TCG\Voyager\Traits\HasCache;
 use TCG\Voyager\Traits\Translatable;
 
 class MenuItem extends Model
 {
+    use HasCache;
     use Translatable;
 
     protected $translatorMethods = [
@@ -21,28 +23,9 @@ class MenuItem extends Model
 
     protected $translatable = ['title'];
 
-    public static function boot()
+    public function getChildrenAttribute()
     {
-        parent::boot();
-
-        static::created(function ($model) {
-            $model->menu->removeMenuFromCache();
-        });
-
-        static::saved(function ($model) {
-            $model->menu->removeMenuFromCache();
-        });
-
-        static::deleted(function ($model) {
-            $model->menu->removeMenuFromCache();
-        });
-    }
-
-    public function children()
-    {
-        return $this->hasMany(Voyager::modelClass('MenuItem'), 'parent_id')
-            ->with('children')
-            ->orderBy('order');
+        return $this->getCached()->where('parent_id', $this->getKey())->sortBy('order');
     }
 
     public function menu()

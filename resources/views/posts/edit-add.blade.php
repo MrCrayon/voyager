@@ -120,7 +120,6 @@
                                 '_field_trans' => get_field_translations($dataTypeContent, 'body')
                             ])
                             @php
-                                $dataTypeRows = $dataType->{($edit ? 'editRows' : 'addRows' )};
                                 $row = $dataTypeRows->where('field', 'body')->first();
                             @endphp
                             {!! app('voyager')->formField($row, $dataType, $dataTypeContent) !!}
@@ -153,7 +152,6 @@
                         </div>
                         <div class="panel-body">
                             @php
-                                $dataTypeRows = $dataType->{($edit ? 'editRows' : 'addRows' )};
                                 $exclude = ['title', 'body', 'excerpt', 'slug', 'status', 'category_id', 'author_id', 'featured', 'image', 'meta_description', 'meta_keywords', 'seo_title'];
                             @endphp
 

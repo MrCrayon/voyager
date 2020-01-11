@@ -83,7 +83,7 @@
                                                 <input type="checkbox" class="select_all">
                                             </th>
                                         @endif
-                                        @foreach($dataType->browseRows as $row)
+                                        @foreach($dataTypeRows as $row)
                                         <th>
                                             @if ($isServerSide)
                                                 <a href="{{ $row->sortByUrl($orderBy, $sortOrder) }}">
@@ -112,7 +112,7 @@
                                                 <input type="checkbox" name="row_id" id="checkbox_{{ $data->getKey() }}" value="{{ $data->getKey() }}">
                                             </td>
                                         @endif
-                                        @foreach($dataType->browseRows as $row)
+                                        @foreach($dataTypeRows as $row)
                                             @php
                                             if ($data->{$row->field.'_browse'}) {
                                                 $data->{$row->field} = $data->{$row->field.'_browse'};

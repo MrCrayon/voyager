@@ -3,10 +3,12 @@
 namespace TCG\Voyager\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use TCG\Voyager\Traits\HasCache;
 use TCG\Voyager\Traits\Translatable;
 
 class DataRow extends Model
 {
+    use HasCache;
     use Translatable;
 
     protected $table = 'data_rows';

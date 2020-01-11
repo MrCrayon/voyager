@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\Process;
+use TCG\Voyager\Models\DataType;
 use TCG\Voyager\Providers\VoyagerDummyServiceProvider;
 use TCG\Voyager\Traits\Seedable;
 use TCG\Voyager\VoyagerServiceProvider;
@@ -123,6 +124,9 @@ class InstallCommand extends Command
         } else {
             $this->call('vendor:publish', ['--provider' => VoyagerServiceProvider::class, '--tag' => ['config', 'voyager_avatar']]);
         }
+
+        // Avoid creating an empty cache on install
+        DataType::clearCacheList();
 
         $this->info('Setting up the hooks');
         $this->call('hook:setup');
