@@ -10,8 +10,9 @@
 
                 @php
                     $relationshipData = (isset($data)) ? $data : $dataTypeContent;
-                    $model = app($options->model);
-                    $query = $model::where($options->key,$relationshipData->{$options->column})->first();
+
+                    $method = $dataType->getRelationMethodName($options);
+                    $query = $relationshipData->{$method};
                 @endphp
 
                 @if(isset($query))
@@ -50,9 +51,8 @@
             @php
                 $relationshipData = (isset($data)) ? $data : $dataTypeContent;
 
-                $model = app($options->model);
-                $query = $model::where($options->column, '=', $relationshipData->{$options->key})->first();
-
+                $method = $dataType->getRelationMethodName($options);
+                $query = $relationshipData->{$method};
             @endphp
 
             @if(isset($query))
@@ -67,9 +67,11 @@
 
                 @php
                     $relationshipData = (isset($data)) ? $data : $dataTypeContent;
-                    $model = app($options->model);
 
-                    $selected_values = $model::where($options->column, '=', $relationshipData->{$options->key})->get()->map(function ($item, $key) use ($options) {
+                    $method = $dataType->getRelationMethodName($options);
+                    $query = $relationshipData->{$method};
+
+                    $selected_values = $query->map(function ($item, $key) use ($options) {
                         return $item->{$options->label};
                     })->all();
                 @endphp
@@ -123,9 +125,16 @@
                 @php
                     $relationshipData = (isset($data)) ? $data : $dataTypeContent;
 
-                    $selected_values = isset($relationshipData) ? $relationshipData->belongsToMany($options->model, $options->pivot_table, $options->foreign_pivot_key ?? null, $options->related_pivot_key ?? null, $options->parent_key ?? null, $options->key)->get()->map(function ($item, $key) use ($options) {
-            			return $item->{$options->label};
-            		})->all() : array();
+                    if (isset($relationshipData)) {
+                        $method = $dataType->getRelationMethodName($options);
+                        $query = $relationshipData->{$method};
+
+                        $selected_values = $query->map(function ($item, $key) use ($options) {
+                            return $item->{$options->label};
+                        })->all();
+                    } else {
+                        $selected_values = [];
+                    }
                 @endphp
 
                 @if($view == 'browse')
@@ -166,11 +175,21 @@
                 >
 
                         @php
-                            $selected_values = isset($dataTypeContent) ? $dataTypeContent->belongsToMany($options->model, $options->pivot_table, $options->foreign_pivot_key ?? null, $options->related_pivot_key ?? null, $options->parent_key ?? null, $options->key)->get()->map(function ($item, $key) use ($options) {
-                                return $item->{$options->key};
-                            })->all() : array();
+                            $relationshipData = (isset($data)) ? $data : $dataTypeContent;
+
+                            if (isset($relationshipData)) {
+                                $method = $dataType->getRelationMethodName($options);
+                                $query = $relationshipData->{$method};
+
+                                $selected_values = $query->map(function ($item, $key) use ($options) {
+                                    return $item->{$options->key};
+                                })->all();
+                            } else {
+                                $selected_values = [];
+                            }
+
                             $relationshipOptions = app($options->model)->all();
-                        $selected_values = old($relationshipField, $selected_values);
+                            $selected_values = old($relationshipField, $selected_values);
                         @endphp
 
                         @if(!$row->required)

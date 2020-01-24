@@ -111,6 +111,12 @@ class VoyagerBaseController extends Controller
 
             // Replace relationships' keys for labels and create READ links if a slug is provided.
             $dataTypeContent = $this->resolveRelations($dataTypeContent, $dataType);
+
+            $relationships = $this->getRelationships($dataType, $dataTypeRows);
+            // Eager load
+            if (!empty($relationships)) {
+                $dataTypeContent->loadMissing($relationships);
+            }
         } else {
             // If Model doesn't exist, get data from table name
             $dataTypeContent = call_user_func([DB::table($dataType->name), $getter]);
@@ -229,6 +235,12 @@ class VoyagerBaseController extends Controller
         // Replace relationships' keys for labels and create READ links if a slug is provided.
         $dataTypeContent = $this->resolveRelations($dataTypeContent, $dataType, true);
 
+        $relationships = $this->getRelationships($dataType, $dataTypeRows);
+        // Eager load
+        if (!empty($relationships)) {
+            $dataTypeContent->loadMissing($relationships);
+        }
+
         // If a column has a relationship associated with it, we do not want to show that field
         $dataTypeRows = $this->removeRelationshipField($dataTypeRows);
 
@@ -291,6 +303,12 @@ class VoyagerBaseController extends Controller
 
         foreach ($dataTypeRows as $key => $row) {
             $dataTypeRows[$key]['col_width'] = isset($row->details->width) ? $row->details->width : 100;
+        }
+
+        $relationships = $this->getRelationships($dataType, $dataTypeRows);
+        // Eager load
+        if (!empty($relationships)) {
+            $dataTypeContent->loadMissing($relationships);
         }
 
         // If a column has a relationship associated with it, we do not want to show that field

@@ -32,6 +32,31 @@ trait BreadRelationshipParser
     }
 
     /**
+     * Build the relationships array for the model's eager load.
+     *
+     * @param DataType $dataType
+     *
+     * @return array
+     */
+    protected function getRelationships(DataType $dataType, $dataTypeRows)
+    {
+        //Check relationships
+        $relationships = [];
+
+        $model = app($dataType->model_name);
+
+        foreach ($dataTypeRows as $row) {
+            if (in_array($row->type, ['relationship'])) {
+                $details = $row->details;
+
+                $relationships[] = $dataType->getRelationMethodName($details);
+            }
+        }
+
+        return $relationships;
+    }
+
+    /**
      * Replace relationships' keys for labels and create READ links if a slug is provided.
      *
      * @param  $dataTypeContent     Can be either an eloquent Model, Collection or LengthAwarePaginator instance.

@@ -5,6 +5,7 @@ namespace TCG\Voyager\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use TCG\Voyager\Database\Schema\SchemaManager;
 use TCG\Voyager\Facades\Voyager;
 use TCG\Voyager\Traits\HasCache;
@@ -16,6 +17,8 @@ class DataType extends Model
     use Translatable;
 
     protected $translatable = ['display_name_singular', 'display_name_plural'];
+
+    protected $cache_translations = true;
 
     protected $table = 'data_types';
 
@@ -38,6 +41,17 @@ class DataType extends Model
         'scope',
         'details',
     ];
+
+    public function __get($name)
+    {
+        if (in_array($name, ['addRows', 'browseRows', 'deleteRows', 'editRows', 'readRows'])) {
+            $name = str_replace('Rows', '', $name);
+
+            return $this->getRows($name);
+        }
+
+        return parent::__get($name);
+    }
 
     public function rows()
     {
@@ -290,14 +304,21 @@ class DataType extends Model
         return Voyager::model('DataRow')->getCached()->where('data_type_id', $this->id)->where($type, 1)->sortBy('order');
     }
 
-    public function __get($name)
+    public function getRelationMethodName($details)
     {
-        if (in_array($name, ['addRows', 'browseRows', 'deleteRows', 'editRows', 'readRows'])) {
-            $name = str_replace('Rows', '', $name);
-
-            return $this->getRows($name);
+        if (!empty($details->methodName)) {
+            return $details->methodName;
         }
 
-        return parent::__get($name);
+        $methodName = class_basename($details->model);
+
+        switch ($details->type) {
+            case 'belongsToMany':
+            case 'hasMany':
+                $methodName = Str::plural($methodName);
+                break;
+        }
+
+        return Str::camel($methodName);
     }
 }
