@@ -5,6 +5,7 @@ namespace TCG\Voyager\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use TCG\Voyager\Database\Schema\SchemaManager;
 use TCG\Voyager\Facades\Voyager;
 use TCG\Voyager\Traits\HasCache;
@@ -16,6 +17,8 @@ class DataType extends Model
     use Translatable;
 
     protected $translatable = ['display_name_singular', 'display_name_plural'];
+
+    protected $cache_translations = true;
 
     protected $table = 'data_types';
 
@@ -286,6 +289,24 @@ class DataType extends Model
     protected function getRows($type)
     {
         return Voyager::model('DataRow')->getCached()->where('data_type_id', $this->id)->where($type, 1)->sortBy('order');
+    }
+
+    public function getRelationMethodName($details)
+    {
+        if (!empty($details->methodName)) {
+            return $details->methodName;
+        }
+
+        $methodName = class_basename($details->model);
+
+        switch ($details->type) {
+            case 'belongsToMany':
+            case 'hasMany':
+                $methodName = Str::plural($methodName);
+                break;
+        }
+         
+        return Str::camel($methodName);
     }
 
     public function __get($name)

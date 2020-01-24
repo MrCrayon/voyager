@@ -11,6 +11,8 @@ use TCG\Voyager\Traits\HasCache;
  */
 trait VoyagerUser
 {
+    use HasRelations;
+
     /**
      * Return default User Role.
      */
