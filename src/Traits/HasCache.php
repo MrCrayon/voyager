@@ -36,29 +36,19 @@ trait HasCache
         return self::loadCache('list');
     }
 
-    protected static function getCachedRelationList()
-    {
-        return self::loadCache('relationList');
-    }
-
-    protected static function getCachedRelation($parameters)
-    {
-        return self::loadCache('relations', $parameters, $parameters['name']);
-    }
-
     public static function getCachedWith($relations = [])
     {
         // This method is different because result is not cached
         // I'll get the cached list and and cached relations ids for belongsToMany
         // then load relations, each relation list might be cached if model uses HasCache Trait
-        $cachedList = self::getCached();
+        $cachedList = self::loadCache('list');
 
         if (!$cachedList->isEmpty()) {
             $obj = $cachedList->first();
             $keyName = $obj->getKeyName();
 
             // Save list of relations in permanent cache so we have a list for clearing
-            $relationList = array_merge(array_keys($relations), self::getCachedRelationList('relationList'));
+            $relationList = array_merge(array_keys($relations), self::loadCache('relationList'));
             self::saveCache('relationList', $relationList);
 
             // Eager load relationships
@@ -66,7 +56,7 @@ trait HasCache
                 if (method_exists($model, 'getCached')) {
                     $model = app($model);
 
-                    $relation = self::getCachedRelation(['name' => $name, 'obj' => $obj, 'keyName' => $keyName]);
+                    $relation = self::loadCache('relations', ['name' => $name, 'obj' => $obj, 'keyName' => $keyName], $name);
 
                     switch ($relation['type']) {
                         case 'HasOne':
@@ -174,11 +164,6 @@ trait HasCache
     }
 
     protected static function loadContentList($parameters)
-    {
-        return parent::all();
-    }
-
-    protected static function loadContentWith($parameters)
     {
         return parent::all();
     }
