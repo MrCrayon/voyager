@@ -209,6 +209,12 @@
                 $('#confirm_delete_modal').modal('hide');
             });
             $('[data-toggle="tooltip"]').tooltip();
+
+            $("form.form-edit-add").on('submit', function(event) {
+                $("button[type=submit]", this).prop('disabled', true);
+
+                return true;
+            });
         });
     </script>
 @stop
