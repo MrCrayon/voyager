@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Voyager Slack Chat
+    url: https://voyager-slack-invitation.herokuapp.com/
+    about: If you are not sure what you are reporting is a bug or have a question on how to use Voyager please join Voyager Slack Chat
