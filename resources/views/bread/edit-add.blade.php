@@ -58,6 +58,9 @@
                                     if ($dataTypeContent->{$row->field.'_'.($edit ? 'edit' : 'add')}) {
                                         $dataTypeContent->{$row->field} = $dataTypeContent->{$row->field.'_'.($edit ? 'edit' : 'add')};
                                     }
+                                    if (!empty($row->details->validation->rule) && strpos($row->details->validation->rule, 'required') !== false) {
+                                        $row->required = 1;
+                                    }
                                 @endphp
                                 @if (isset($row->details->legend) && isset($row->details->legend->text))
                                     <legend class="text-{{ $row->details->legend->align ?? 'center' }}" style="background-color: {{ $row->details->legend->bgcolor ?? '#f0f0f0' }};padding: 5px;">{{ $row->details->legend->text }}</legend>
@@ -65,7 +68,7 @@
 
                                 <div class="form-group @if($row->type == 'hidden') hidden @endif col-md-{{ $display_options->width ?? 12 }} {{ $errors->has($row->field) ? 'has-error' : '' }}" @if(isset($display_options->id)){{ "id=$display_options->id" }}@endif>
                                     {{ $row->slugify }}
-                                    <label class="control-label" for="name">{{ $row->getTranslatedAttribute('display_name') }}</label>
+                                    <label class="control-label" for="name">{{ $row->getTranslatedAttribute('display_name') }}@if(($row->required == 1 || !empty($row->details->required)) && empty($row->details->readonly))<span class="requiredSymbol">*</span>@endif</label>
                                     @include('voyager::multilingual.input-hidden-bread-edit-add')
                                     @if (isset($row->details->view))
                                         @include($row->details->view, ['row' => $row, 'dataType' => $dataType, 'dataTypeContent' => $dataTypeContent, 'content' => $dataTypeContent->{$row->field}, 'action' => ($edit ? 'edit' : 'add'), 'view' => ($edit ? 'edit' : 'add'), 'options' => $row->details])
