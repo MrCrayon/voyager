@@ -91,7 +91,7 @@ class Menu extends Model
         }
 
         $items = $items->transform(function ($item) {
-            $item->children = $item->children;
+            $item->children = $item->getChildren();
 
             // Translate title
             $item->title = $item->getTranslatedAttribute('title');
@@ -114,7 +114,7 @@ class Menu extends Model
             }
 
             if ($item->children->count() > 0) {
-                $item->setRelation('children', static::processItems($item->children));
+                $item->children = static::processItems($item->children);
 
                 if (!$item->children->where('active', true)->isEmpty()) {
                     $item->active = true;

@@ -23,7 +23,7 @@ class MenuItem extends Model
 
     protected $translatable = ['title'];
 
-    public function getChildrenAttribute()
+    public function getChildren()
     {
         return $this->getCached()->where('parent_id', $this->getKey())->sortBy('order');
     }
