@@ -165,20 +165,20 @@
                                             $field = $data->{$row->field};
                                         }
                                     } elseif ($row->type == 'color') {
-                                        $field = '<span class="badge badge-lg" style="background-color: ' . htmlentities($data->{$row->field}) . '">' . htmlentities($data->{$row->field}) . '</span>';
+                                        $field = '<span class="badge badge-lg" style="background-color: ' . e($data->{$row->field}) . '">' . e($data->{$row->field}) . '</span>';
                                     } elseif ($row->type == 'text') {
                                         $field = getIncludeContent(get_defined_vars(), 'voyager::multilingual.input-hidden-bread-browse');
-                                        $field .= '<div>'.htmlentities(mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field}).'</div>';
+                                        $field .= '<div>'.e(mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field}).'</div>';
                                     } elseif ($row->type == 'text_area') {
                                         $field = getIncludeContent(get_defined_vars(), 'voyager::multilingual.input-hidden-bread-browse');
-                                        $field .= '<div>'.htmlentities(mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field}).'</div>';
+                                        $field .= '<div>'.e(mb_strlen( $data->{$row->field} ) > 200 ? mb_substr($data->{$row->field}, 0, 200) . ' ...' : $data->{$row->field}).'</div>';
                                     } elseif ($row->type == 'file' && !empty($data->{$row->field}) ) {
                                         $field = getIncludeContent(get_defined_vars(), 'voyager::multilingual.input-hidden-bread-browse');
                                         if (json_decode($data->{$row->field})) {
                                             foreach (json_decode($data->{$row->field}) as $file) {
                                                 $href = Storage::disk(config('voyager.storage.disk'))->url($file->download_link) ?? '';
                                                 $field .= '<a href="'.$href.'" target="_blank">';
-                                                $field .= htmlentities($file->original_name) ?? '';
+                                                $field .= e($file->original_name) ?? '';
                                                 $field .= '</a><br/>';
                                             }
                                         } else {
@@ -215,7 +215,7 @@
                                             } else {
                                                 $field = '<ul>';
                                                 foreach (array_slice($files, 0, 3) as $file) {
-                                                    $field .= '<li>'.htmlentities($file).'</li>';
+                                                    $field .= '<li>'.e($file).'</li>';
                                                 }
                                                 $field .= '</ul>';
                                             }
@@ -229,18 +229,18 @@
                                                 $src = ( !filter_var($data->{$row->field}, FILTER_VALIDATE_URL)) ? Voyager::image( $data->{$row->field} ) : $data->{$row->field};
                                                 $field = '<img src="'.$src.'" style="width:50px">';
                                             } else {
-                                                $field = htmlentities($data->{$row->field});
+                                                $field = e($data->{$row->field});
                                             }
                                         } else {
                                             $field = trans_choice('voyager::media.files', 0);
                                         }
                                     } else {
                                         $field = getIncludeContent(get_defined_vars(), 'voyager::multilingual.input-hidden-bread-browse');
-                                        $field .= htmlentities($data->{$row->field});
+                                        $field .= e($data->{$row->field});
                                     }
 
                                     if ($filter) {
-                                        $field = htmlentities($field);
+                                        $field = e($field);
                                     }
 
                                     $item[] = $field;
