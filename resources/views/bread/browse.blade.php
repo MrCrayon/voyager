@@ -267,6 +267,7 @@
                                                 <input type="checkbox" class="select_all">
                                             </th>
                                         @endif
+
                                         @foreach($dataTypeRows as $row)
                                         <th class="{{ $row->details->browse->thead->class ?? '' }}">
                                             @if ($isServerSide && $row->type !== 'relationship')

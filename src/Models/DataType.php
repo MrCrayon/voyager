@@ -42,6 +42,17 @@ class DataType extends Model
         'details',
     ];
 
+    public function __get($name)
+    {
+        if (in_array($name, ['addRows', 'browseRows', 'deleteRows', 'editRows', 'readRows'])) {
+            $name = str_replace('Rows', '', $name);
+
+            return $this->getRows($name);
+        }
+
+        return parent::__get($name);
+    }
+
     public function rows()
     {
         return $this->hasMany(Voyager::modelClass('DataRow'))->orderBy('order');
@@ -309,16 +320,5 @@ class DataType extends Model
         }
 
         return Str::camel($methodName);
-    }
-
-    public function __get($name)
-    {
-        if (in_array($name, ['addRows', 'browseRows', 'deleteRows', 'editRows', 'readRows'])) {
-            $name = str_replace('Rows', '', $name);
-
-            return $this->getRows($name);
-        }
-
-        return parent::__get($name);
     }
 }
